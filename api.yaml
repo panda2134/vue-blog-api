@@ -1,0 +1,822 @@
+openapi: 3.0.0
+servers: []
+info:
+  description: This is the API defined for vue-blog
+  version: 1.0.0
+  title: Vue Blog API
+  termsOfService: ''
+  contact:
+    email: me@panda2134.site
+    name: panda2134
+    url: panda2134.site
+  license:
+    name: MIT
+    url: ''
+tags: []
+components:
+  schemas:
+    FriendLink:
+      type: object
+      properties:
+        name:
+          type: string
+        link:
+          type: string
+          format: url
+    BlogMeta:
+      type: object
+      example:
+        site_title: Test Blog
+        author: John Doe
+        contact:
+          twitter: '@johndoe'
+          email: john.doe@example.com
+        friends:
+          - name: Alice
+            link: 'https://example.com/1'
+          - name: Bob
+            link: 'https://example.com/2'
+        description: This is John Doe's Blog
+      properties:
+        site_title:
+          type: string
+        author:
+          type: string
+        contact:
+          type: object
+          additionalProperties: true
+        description:
+          type: string
+        friends:
+          type: array
+          items:
+            $ref: '#/components/schemas/FriendLink'
+    ApiResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: ok
+        message:
+          type: object
+    PostMeta:
+      type: object
+      properties:
+        name:
+          type: string
+        categories:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    Post:
+      allOf:
+        - $ref: '#/components/schemas/PostMeta'
+        - type: object
+          properties:
+            text:
+              type: string
+    AboutPage:
+      type: object
+      properties:
+        text:
+          type: string
+    Comments:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        list:
+          type: array
+          readOnly: true
+          items:
+            $ref: '#/components/schemas/CommentItem'
+    CommentItem:
+      type: object
+      properties:
+        id:
+          readOnly: true
+          type: integer
+          example: 42
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        text:
+          type: string
+        isSpam:
+          type: boolean
+          example: false
+    PostExcerpt:
+      allOf:
+        - $ref: '#/components/schemas/PostMeta'
+        - type: object
+          properties:
+            excerpt:
+              type: string
+    PostExcerptList:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/PostExcerpt'
+    Categories:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            type: string
+    Tags:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+    Captcha:
+      type: object
+      properties:
+        image:
+          type: string
+          format: uri
+        answer_enc:
+          type: string
+        answer:
+          type: string
+          writeOnly: true
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: Bearer
+    Login:
+      type: http
+      scheme: Basic
+paths:
+  /categories/:
+    get:
+      summary: List all categories
+      description: Generated from posts. When all posts in a certain category are deleted, the category itself also get removed. There can only be exactly one category for a post.
+      parameters: []
+      operationId: getCategories
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                status: ok
+                message:
+                  categories:
+                    - maths
+                    - coding
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/Categories'
+  /categories/{category}:
+    get:
+      summary: List all posts in a category
+      parameters:
+        - in: path
+          name: category
+          required: true
+          example: maths
+          schema:
+            type: string
+      operationId: getPostInCategory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                status: ok
+                messages:
+                  '1':
+                    name: The first post
+                    category: maths
+                    tags:
+                      - cpp
+                      - crypto
+                    excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/PostExcerptList'
+        '404':
+          description: Not found - no such category
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: not found
+  /tags/:
+    get:
+      summary: List all tags
+      description: Generated from posts. When all posts with a certain tag are deleted, the tag also get removed. A post can have more than one tag.
+      parameters: []
+      operationId: getTags
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                status: ok
+                message:
+                  tags:
+                    - cpp
+                    - python
+                    - crypto
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/Tags'
+  /tags/{tag}:
+    get:
+      summary: List all posts with a tag
+      parameters:
+        - in: path
+          name: tag
+          required: true
+          example: crypto
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                status: ok
+                message:
+                  '1':
+                    name: The first post
+                    category: maths
+                    tags:
+                      - cpp
+                      - crypto
+                    excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/PostExcerptList'
+        '404':
+          description: Not found - no such tag
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: not found
+  /posts/:
+    get:
+      summary: List all post excerpt
+      operationId: getPostExcerptList
+      parameters: 
+        - in: query
+          name: q
+          example: post
+          schema:
+            type: string
+          description: The string to search in posts
+          required: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              example:
+                status: ok
+                message:
+                  posts:
+                    '1':
+                      name: The first post
+                      category: maths
+                      tags:
+                        - cpp
+                        - crypto
+                      excerpt: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                    '2':
+                      name: The second post
+                      category: coding
+                      tags:
+                        - python
+                      excerpt: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.'
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/PostExcerptList'
+    post:
+      summary: Add a new post
+      description: Need to be authorized first. The corresponding comment area is also initialized, turned off by default.
+      operationId: addPost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        properties:
+                          id:
+                            type: string
+                            example: "3"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message: {}
+                      status:
+                        type: string
+                        example: unauthorized
+              
+  /posts/{id}:
+    parameters:
+      - in: path
+        name: id
+        description: The id of the post
+        required: true
+        schema:
+          type: integer
+          example: 1
+    get:
+      summary: Get a post item
+      operationId: getPost
+      responses: &getpost_resp
+        '200':
+          description: OK
+          content: 
+            application/json:
+              example:
+                status: ok
+                message:
+                  name: The first post
+                  category: maths
+                  tags:
+                    - cpp
+                    - crypto
+                  text: |-
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                
+                    # More lipsum
+                    At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+                
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/Post'
+    delete:
+      summary: Remove a existing post
+      description: Need to be authorized first
+      security: 
+        - BearerAuth: []
+      responses: &delAndPutPostResponse
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        properties:
+                          id:
+                            type: string
+                            example: "1"
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message: {}
+                      status:
+                        type: string
+                        example: unauthorized
+    put:
+      summary: Update a existing post
+      description: need to be authorized first
+      operationId: updatePost
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Post'
+      security:
+        - BearerAuth: []
+      responses:
+        <<: *delAndPutPostResponse
+  /meta:
+    get:
+      summary: Get meta information of the blog
+      operationId: getMeta
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/BlogMeta'
+    put:
+      summary: Edit meta information
+      security:
+        - BearerAuth: []
+      operationId: updateMeta
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlogMeta'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+  /about:
+    get:
+      summary: Get about page
+      operationId: getAboutPage
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/AboutPage'
+    put:
+      summary: Update about page
+      security:
+        - BearerAuth: []
+      operationId: updateAboutPage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AboutPage'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: unauthorized
+  /comments/:
+    get:
+      summary: All comments in this blog
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CommentItem'
+  /comments/{uri}/:
+    parameters:
+      - in: path
+        name: uri
+        required: true
+        schema:
+          type: string
+          format: uri
+    get:
+      summary: All comments in uri
+      description: |
+        {uri} can be "posts/{id}" or "about".
+        This is independent of the URL of post api, etc.
+        When firing this query, the server should look into the post object
+        or the about page object, and gather the corresponding comment list
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Comments'
+    post:
+      summary: New comment
+      description: |
+        This API is rate-limited (5 calls / min). Captcha may or may not be shown, depending on server setting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/CommentItem'
+                - type: object
+                  properties:
+                    captcha:
+                      $ref: '#/components/schemas/Captcha'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/CommentItem'
+        '403':
+          description: the user used a bad captcha
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: bad captcha
+    put:
+      summary: Toggle comments to be on/off
+      description: |
+        This can only work AFTER the page (post / about) is created!
+        ## Sample usage
+        ```javascript
+        axios.post('/posts/', {/* new post */})
+        .then(res => {
+          let id = res.data.message.id;
+          let request = {};
+          request.enabled = true;
+          return axios.put(`/comments/posts/${id}`, request);
+        });
+        ```
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Comments'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: unauthorized
+            
+  /comments/{uri}/{commentId}:
+    parameters:
+      - in: path
+        name: uri
+        required: true
+        schema:
+          type: string
+          format: uri
+      - in: path
+        name: commentId
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get one comment item in the path of {uri}
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/CommentItem'
+        '404': &getCommentItemResp404
+          description: >
+            Not found - Either comments are not initialized for uri,
+            or the comment #id doesn't exist
+            Comments are initialized only when a new post / about page is created
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - allOf:
+                    - $ref: '#/components/schemas/ApiResponse'
+                    - type: object
+                      properties:
+                        status:
+                          example: comments not initialized
+                  
+                  - allOf:
+                    - $ref: '#/components/schemas/ApiResponse'
+                    - type: object
+                      properties:
+                        status:
+                          example: comment not found
+    delete:
+      summary: Remove a comment
+      security:
+        - BeararAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: unauthorized
+        '404':
+          <<: *getCommentItemResp404
+  /captcha:
+    put:
+      summary: Toggle captcha on/off
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                enabled:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Bad credentials
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: bad credentials
+    get:
+      summary: Get a captcha and encrypted answer
+      responses:
+        '200':
+          description: OK. Captcha is enabled and a captcha image is generated.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        $ref: '#/components/schemas/Captcha'
+        '404':
+          description: Captcha is disabled
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: captcha is disabled
+  /login:
+    post:
+      summary: Login and retrieve JWT
+      security:
+        - BasicAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                captcha:
+                  $ref: '#/components/schemas/Captcha'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      message:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+        '401':
+          description: |
+            Bad credentials
+            returned status can be `bad credential` or `bad captcha`
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        example: bad captcha
+
