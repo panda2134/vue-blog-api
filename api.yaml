@@ -818,5 +818,4 @@ paths:
                   - type: object
                     properties:
                       status:
-                        example: bad captcha
-
+                        example: bad captcha # test
