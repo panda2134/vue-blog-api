@@ -628,6 +628,7 @@ paths:
   /comments/:
     get:
       summary: All comments in this blog
+      operationId: all_comments
       responses:
         '200':
           description: OK
@@ -649,6 +650,7 @@ paths:
           format: uri
     get:
       summary: All comments in uri
+      operationId: views.CommentsView.get_comments_in_uri
       description: |
         {uri} can be "posts/{id}" or "about".
         This is independent of the URL of post api, etc.
@@ -665,6 +667,7 @@ paths:
         - comments
     post:
       summary: New comment
+      operationId: views.CommentsView.post_comment_in_uri
       description: |
         This API is rate-limited (5 calls / min). Captcha may or may not be shown, depending on server setting
       requestBody:
@@ -709,6 +712,7 @@ paths:
         - comments
     put:
       summary: Toggle comments to be on/off
+      operationId: views.CommentsView.toggle_comments_in_uri
       description: |
         This can only work AFTER the page (post / about) is created!
         ## Sample usage
@@ -769,6 +773,7 @@ paths:
           type: integer
     get:
       summary: Get one comment item in the path of {uri}
+      operationId: views.CommentsView.get_comment_by_id
       responses:
         '200':
           description: OK
@@ -804,6 +809,7 @@ paths:
         - comments
     delete:
       summary: Remove a comment
+      operationId: views.CommentsView.remove_comment_by_id
       security:
         - BearerAuth: []
       responses:
