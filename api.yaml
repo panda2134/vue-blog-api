@@ -953,6 +953,7 @@ paths:
     description: OOBE configuration
     get:
       summary: get the state of OOBE
+      operationId: views.OOBEView.get
       responses:
         '204':
           description: ready for OOBE
@@ -975,6 +976,7 @@ paths:
         - misc
     post:
       summary: submit OOBE configuration
+      operationId: views.OOBEView.post
       requestBody:
         required: true
         content:
