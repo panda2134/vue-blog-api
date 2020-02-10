@@ -186,14 +186,17 @@ components:
           type: string
           minLength: 3
           maxLength: 20
+          example: admin
         password:
           type: string
           format: password
           minLength: 6
           maxLength: 128
+          example: 12345678
         captcha:
           type: boolean
           description: whether captcha is turned on for the blog
+          example: true
   securitySchemes:
     BearerAuth:
       type: http
@@ -979,7 +982,11 @@ paths:
                         example: 410
                       title:
                         type: string
-                        example: gone
+                        example: Gone
+                      detail:
+                        type: string
+                        example: |
+                          The requested URL is no longer available on this server and there is no forwarding address. If you followed a link from a foreign page, please contact the author of this page.
       tags:
         - misc
     post:
