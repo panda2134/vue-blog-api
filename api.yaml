@@ -872,6 +872,7 @@ paths:
         - misc
     get:
       summary: Get a captcha and encrypted answer
+      operationId: views.CaptchaView.get
       responses:
         '200':
           description: OK. Captcha is enabled and a captcha image is generated.
