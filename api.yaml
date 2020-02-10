@@ -70,9 +70,11 @@ components:
         status:
           type: integer
           example: 200
-        message:
+        title:
           type: string
-          example: ok
+          example: OK
+        detail:
+          type: string
         payload:
           type: object
           additionalProperties: true
@@ -214,7 +216,7 @@ paths:
           content:
             application/json:
               example:
-                message: ok
+                title: OK
                 payload:
                   categories:
                     - maths
@@ -244,7 +246,7 @@ paths:
           content:
             application/json:
               example:
-                message: ok
+                title: OK
                 payload:
                   '1':
                     name: The first post
@@ -272,7 +274,7 @@ paths:
                       status:
                         type: integer
                         example: 404
-                      message:
+                      title:
                         type: string
                         example: not found
       tags:
@@ -288,7 +290,7 @@ paths:
           content:
             application/json:
               example:
-                message: ok
+                title: OK
                 payload:
                   tags:
                     - cpp
@@ -319,7 +321,7 @@ paths:
           content:
             application/json:
               example:
-                message: ok
+                title: OK
                 payload:
                   '1':
                     name: The first post
@@ -347,7 +349,7 @@ paths:
                       status:
                         type: integer
                         example: 404
-                      message:
+                      title:
                         type: string
                         example: not found
       tags:
@@ -369,7 +371,7 @@ paths:
           content:
             application/json:
               example:
-                message: ok
+                title: OK
                 payload:
                   '1':
                     name: The first post
@@ -434,9 +436,9 @@ paths:
                       payload: 
                         type: object
                         properties: {}
-                      message:
+                      title:
                         type: string
-                        example: unauthorized
+                        example: Unauthorized
       tags:
         - pages
               
@@ -457,7 +459,7 @@ paths:
           content: 
             application/json:
               example:
-                message: ok
+                title: OK
                 payload:
                   name: The first post
                   category: maths
@@ -516,9 +518,9 @@ paths:
                       payload:
                         type: object
                         properties: {}
-                      message:
+                      title:
                         type: string
-                        example: unauthorized
+                        example: Unauthorized
       tags:
         - pages
     put:
@@ -620,9 +622,9 @@ paths:
                       status:
                         type: integer
                         example: 401
-                      message:
+                      title:
                         type: string
-                        example: unauthorized
+                        example: Unauthorized
       tags:
         - pages
   /comments/:
@@ -654,7 +656,7 @@ paths:
       description: |
         {uri} can be "posts/{id}" or "about".
         This is independent of the URL of post api, etc.
-        When firing this query, the server should look into the post object
+        When firing this query, the server should loOK into the post object
         or the about page object, and gather the corresponding comment list
       responses:
         '200':
@@ -705,7 +707,7 @@ paths:
                       status:
                         type: integer
                         example: 403
-                      message:
+                      title:
                         type: string
                         example: bad captcha
       tags:
@@ -752,9 +754,9 @@ paths:
                       status:
                         type: integer
                         example: 401
-                      message:
+                      title:
                         type: string
-                        example: unauthorized
+                        example: Unauthorized
       tags:
         - comments
             
@@ -801,7 +803,7 @@ paths:
                       status:
                         type: integer
                         example: 404
-                      message:
+                      title:
                         type: string
                         example: comments not initialized
                         description: can also be `comments not found`
@@ -831,9 +833,9 @@ paths:
                       status:
                         type: integer
                         example: 401
-                      message:
+                      title:
                         type: string
-                        example: unauthorized
+                        example: Unauthorized
         '404':
           <<: *getCommentItemResp404
       tags:
@@ -871,7 +873,7 @@ paths:
                       status:
                         type: integer
                         example: 401
-                      message:
+                      title:
                         type: string
                         example: bad credentials
       tags:
@@ -903,7 +905,7 @@ paths:
                       status:
                         type: integer
                         example: 404
-                      message:
+                      title:
                         type: string
                         example: captcha is disabled
       tags:
@@ -934,12 +936,12 @@ paths:
                       payload:
                         type: object
                         properties:
-                          token:
+                          tOKen:
                             type: string
         '401':
           description: |
             Bad credentials
-            returned message can be `bad credential` or `bad captcha`
+            returned title can be `bad credential` or `bad captcha`
           content:
             application/json:
               schema:
@@ -950,7 +952,7 @@ paths:
                       status:
                         type: integer
                         example: 401
-                      message:
+                      title:
                         type: string
                         example: bad captcha
       tags:
@@ -975,7 +977,7 @@ paths:
                       status:
                         type: integer
                         example: 410
-                      message:
+                      title:
                         type: string
                         example: gone
       tags:
