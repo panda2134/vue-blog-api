@@ -704,7 +704,7 @@ paths:
     delete:
       summary: Remove a comment
       security:
-        - BeararAuth: []
+        - BearerAuth: []
       responses:
         '200':
           description: OK
