@@ -537,6 +537,7 @@ paths:
   /meta:
     get:
       summary: Get meta information of the blog
+      operationId: views.MetaView.get
       responses:
         '200':
           description: OK
@@ -573,6 +574,7 @@ paths:
   /about:
     get:
       summary: Get about page
+      operationId: views.AboutView.get
       responses:
         '200':
           description: OK
