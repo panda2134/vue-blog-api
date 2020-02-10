@@ -628,7 +628,7 @@ paths:
   /comments/:
     get:
       summary: All comments in this blog
-      operationId: all_comments
+      operationId: views.CommentsView.all_comments
       responses:
         '200':
           description: OK
