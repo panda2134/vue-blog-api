@@ -206,7 +206,6 @@ paths:
       summary: List all categories
       description: Generated from posts. When all posts in a certain category are deleted, the category itself also get removed. There can only be exactly one category for a post.
       parameters: []
-      operationId: getCategories
       responses:
         '200':
           description: OK
@@ -237,7 +236,6 @@ paths:
           example: maths
           schema:
             type: string
-      operationId: getPostInCategory
       responses:
         '200':
           description: OK
@@ -282,7 +280,6 @@ paths:
       summary: List all tags
       description: Generated from posts. When all posts with a certain tag are deleted, the tag also get removed. A post can have more than one tag.
       parameters: []
-      operationId: getTags
       responses:
         '200':
           description: OK
@@ -314,7 +311,6 @@ paths:
           example: crypto
           schema:
             type: string
-      operationId: getPostInTags
       responses:
         '200':
           description: OK
@@ -357,7 +353,6 @@ paths:
   /posts/:
     get:
       summary: List all post excerpt
-      operationId: getPostExcerptList
       parameters: 
         - in: query
           name: q
@@ -399,7 +394,6 @@ paths:
     post:
       summary: Add a new post
       description: Need to be authorized first. The corresponding comment area is also initialized, turned off by default.
-      operationId: addPost
       requestBody:
         required: true
         content:
@@ -455,7 +449,6 @@ paths:
           example: 1
     get:
       summary: Get a post item
-      operationId: getPost
       responses: &getpost_resp
         '200':
           description: OK
@@ -490,7 +483,6 @@ paths:
       description: Need to be authorized first
       security: 
         - BearerAuth: [] # corrected 
-      operationId: removePost
       responses: &delAndPutPostResponse
         '200':
           description: OK
@@ -530,7 +522,6 @@ paths:
     put:
       summary: Update a existing post
       description: need to be authorized first
-      operationId: updatePost
       requestBody:
         required: true
         content:
@@ -546,7 +537,6 @@ paths:
   /meta:
     get:
       summary: Get meta information of the blog
-      operationId: getMeta
       responses:
         '200':
           description: OK
@@ -565,7 +555,6 @@ paths:
       summary: Edit meta information
       security:
         - BearerAuth: []
-      operationId: updateMeta
       requestBody:
         required: true
         content:
@@ -584,7 +573,6 @@ paths:
   /about:
     get:
       summary: Get about page
-      operationId: getAboutPage
       responses:
         '200':
           description: OK
@@ -603,7 +591,6 @@ paths:
       summary: Update about page
       security:
         - BearerAuth: []
-      operationId: updateAboutPage
       requestBody:
         required: true
         content:
@@ -637,7 +624,6 @@ paths:
   /comments/:
     get:
       summary: All comments in this blog
-      operationId: getAllComments
       responses:
         '200':
           description: OK
@@ -659,7 +645,6 @@ paths:
           format: uri
     get:
       summary: All comments in uri
-      operationId: getCommentsInPage
       description: |
         {uri} can be "posts/{id}" or "about".
         This is independent of the URL of post api, etc.
@@ -676,7 +661,6 @@ paths:
         - comments
     post:
       summary: New comment
-      operationId: addCommentInPage
       description: |
         This API is rate-limited (5 calls / min). Captcha may or may not be shown, depending on server setting
       requestBody:
@@ -721,7 +705,6 @@ paths:
         - comments
     put:
       summary: Toggle comments to be on/off
-      operationId: toggleCommentsInPage
       description: |
         This can only work AFTER the page (post / about) is created!
         ## Sample usage
@@ -782,7 +765,6 @@ paths:
           type: integer
     get:
       summary: Get one comment item in the path of {uri}
-      operationId: getCommentById
       responses:
         '200':
           description: OK
@@ -818,7 +800,6 @@ paths:
         - comments
     delete:
       summary: Remove a comment
-      operationId: removeCommentById
       security:
         - BearerAuth: []
       responses:
@@ -850,7 +831,6 @@ paths:
   /captcha:
     put:
       summary: Toggle captcha on/off
-      operationId: toggleCaptcha
       security:
         - BearerAuth: []
       requestBody:
@@ -888,7 +868,6 @@ paths:
         - misc
     get:
       summary: Get a captcha and encrypted answer
-      operationId: getCaptcha
       responses:
         '200':
           description: OK. Captcha is enabled and a captcha image is generated.
@@ -921,7 +900,6 @@ paths:
   /login:
     post:
       summary: Login and retrieve JWT
-      operationId: doLogin
       security:
         - BasicAuth: []
       requestBody:
