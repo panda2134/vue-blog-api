@@ -170,6 +170,7 @@ components:
         image:
           type: string
           format: uri
+          readOnly: true
         answer_enc:
           type: string
         answer:
