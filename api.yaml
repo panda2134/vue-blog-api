@@ -939,7 +939,7 @@ paths:
                       payload:
                         type: object
                         properties:
-                          tOKen:
+                          token:
                             type: string
         '401':
           description: |
