@@ -956,7 +956,7 @@ paths:
                       status:
                         type: integer
                         example: 401
-                      title:
+                      detail:
                         type: string
                         example: bad captcha
       tags:
