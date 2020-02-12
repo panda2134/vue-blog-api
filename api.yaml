@@ -81,13 +81,13 @@ components:
     PostMeta:
       required:
         - name
-        - categories
+        - category
         - tags
       type: object
       properties:
         name:
           type: string
-        categories:
+        category:
           type: string
           maxLength: 64
         tags:
