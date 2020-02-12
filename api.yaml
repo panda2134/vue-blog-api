@@ -687,9 +687,12 @@ paths:
                         type: object
                         properties:
                           comments:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/CommentItem'
+                            type: object
+                            properties:
+                              list:
+                                type: array
+                                items:
+                                  $ref: '#/components/schemas/CommentItem'
       tags:
         - comments
   /comments/{uri}/:
