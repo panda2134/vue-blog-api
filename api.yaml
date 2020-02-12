@@ -217,9 +217,15 @@ components:
 paths:
   /categories/:
     get:
+      parameters: 
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: The string to search in categories
+          required: false
       summary: List all categories
       description: Generated from posts. When all posts in a certain category are deleted, the category itself also get removed. There can only be exactly one category for a post.
-      parameters: []
       responses:
         '200':
           description: OK
@@ -293,7 +299,13 @@ paths:
     get:
       summary: List all tags
       description: Generated from posts. When all posts with a certain tag are deleted, the tag also get removed. A post can have more than one tag.
-      parameters: []
+      parameters: 
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: The string to search in tags
+          required: false
       responses:
         '200':
           description: OK
