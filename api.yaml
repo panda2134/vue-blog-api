@@ -108,11 +108,17 @@ components:
           properties:
             text:
               type: string
+            comment_loc:
+              type: string
+              readOnly: true
     AboutPage:
       type: object
       properties:
         text:
           type: string
+        comment_loc:
+          type: string
+          readOnly: true
     Comments:
       type: object
       properties:
