@@ -79,6 +79,10 @@ components:
           type: object
           additionalProperties: true
     PostMeta:
+      required:
+        - name
+        - categories
+        - tags
       type: object
       properties:
         name:
@@ -99,6 +103,8 @@ components:
       allOf:
         - $ref: '#/components/schemas/PostMeta'
         - type: object
+          required:
+            - text
           properties:
             text:
               type: string
