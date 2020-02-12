@@ -130,6 +130,9 @@ components:
           items:
             $ref: '#/components/schemas/CommentItem'
     CommentItem:
+      required: 
+        - username
+        - text
       type: object
       properties:
         id:
