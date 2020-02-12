@@ -371,16 +371,16 @@ paths:
           required: false
         - in: query
           name: page
-          example: post
+          example: 1
           schema:
-            type: string
+            type: integer
           description: Which page to get
           required: false
         - in: query
           name: per_page
-          example: post
+          example: 20
           schema:
-            type: string
+            type: integer
           description: How many posts per page
           required: false
       responses:
