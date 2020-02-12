@@ -369,6 +369,20 @@ paths:
             type: string
           description: The string to search in posts
           required: false
+        - in: query
+          name: page
+          example: post
+          schema:
+            type: string
+          description: Which page to get
+          required: false
+        - in: query
+          name: per_page
+          example: post
+          schema:
+            type: string
+          description: How many posts per page
+          required: false
       responses:
         '200':
           description: OK
