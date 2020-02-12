@@ -690,7 +690,7 @@ paths:
                             type: object
                             properties:
                               list:
-                                type: array
+                                type: array 
                                 items:
                                   $ref: '#/components/schemas/CommentItem'
       tags:
