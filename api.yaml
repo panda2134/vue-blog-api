@@ -698,10 +698,10 @@ paths:
                                   $ref: '#/components/schemas/CommentItem'
       tags:
         - comments
-  /comments/{uri}/:
+  /comments/{loc}/:
     parameters:
       - in: path
-        name: uri
+        name: loc
         required: true
         schema:
           type: string
@@ -709,7 +709,7 @@ paths:
       summary: All comments in uri
       operationId: views.CommentsView.get_comments_in_uri
       description: |
-        {uri} can be "posts/{id}" or "about".
+        {loc} can be "posts.{id}" or "about".
         This is independent of the URL of post api, etc.
         When firing this query, the server should loOK into the post object
         or the about page object, and gather the corresponding comment list
@@ -787,7 +787,7 @@ paths:
           let id = res.data.payload.id;
           let request = {};
           request.enabled = true;
-          return axios.put(`/comments/posts/${id}`, request);
+          return axios.put(`/comments/posts.${id}`, request);
         });
         ```
       security:
@@ -823,10 +823,10 @@ paths:
       tags:
         - comments
             
-  /comments/{uri}/{commentId}:
+  /comments/{loc}/{commentId}:
     parameters:
       - in: path
-        name: uri
+        name: loc
         required: true
         schema:
           type: string
@@ -837,7 +837,7 @@ paths:
         schema:
           type: integer
     get:
-      summary: Get one comment item in the path of {uri}
+      summary: Get one comment item in the path of {loc}
       operationId: views.CommentsView.get_comment_by_id
       responses:
         '200':
