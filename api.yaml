@@ -218,7 +218,7 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      x-bearerInfoFunc: utils.auth.jwt_decode
+      x-bearerInfoFunc: utils.auth.jwt_auth
     BasicAuth:
       type: http
       scheme: basic
@@ -421,6 +421,7 @@ paths:
                   '1':
                     name: The first post
                     category: maths
+                    updated: 1970-01-01T00:00:00Z
                     tags:
                       - cpp
                       - crypto
@@ -430,6 +431,7 @@ paths:
                     category: coding
                     tags:
                       - python
+                    updated: 1970-01-01T00:00:00Z
                     excerpt: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.'
               schema:
                 allOf:
@@ -759,7 +761,7 @@ paths:
                       payload:
                         $ref: '#/components/schemas/CommentItem'
         '403':
-          description: the user used a bad captcha
+          description: the user used a bad captcha / comments are disabled on this page
           content:
             application/json:
               schema:
@@ -770,9 +772,8 @@ paths:
                       status:
                         type: integer
                         example: 403
-                      title:
+                      detail:
                         type: string
-                        example: bad captcha
       tags:
         - comments
     put:
@@ -823,7 +824,7 @@ paths:
       tags:
         - comments
             
-  /comments/{loc}/{commentId}:
+  /comments/{loc}/{comment_id}:
     parameters:
       - in: path
         name: loc
@@ -832,7 +833,7 @@ paths:
           type: string
           
       - in: path
-        name: commentId
+        name: comment_id
         required: true
         schema:
           type: integer
@@ -870,6 +871,47 @@ paths:
                         type: string
                         example: comments not initialized
                         description: can also be `comments not found`
+      tags:
+        - comments
+    put:
+      summary: Set a comment to be (not) spam
+      operationId: views.CommentsView.set_spam
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - isSpam
+              type: object
+              properties:
+                isSpam:
+                  type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        example: 401
+                      title:
+                        type: string
+                        example: Unauthorized
+        '404':
+          <<: *getCommentItemResp404
       tags:
         - comments
     delete:
@@ -1003,8 +1045,7 @@ paths:
                             type: string
         '401':
           description: |
-            Bad credentials
-            returned title can be `bad credential`
+            Bad credential
           content:
             application/json:
               schema:
@@ -1017,8 +1058,7 @@ paths:
                         example: 401
         '403':
           description: |
-            Bad credentials
-            returned title can be `bad credential`
+            Bad captcha
           content:
             application/json:
               schema:
