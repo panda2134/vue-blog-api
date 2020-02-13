@@ -707,7 +707,7 @@ paths:
           type: string
     get:
       summary: All comments in uri
-      operationId: views.CommentsView.get_comments_in_uri
+      operationId: views.CommentsView.get_comments_in_loc
       description: |
         {loc} can be "posts.{id}" or "about".
         This is independent of the URL of post api, etc.
@@ -732,7 +732,7 @@ paths:
         - comments
     post:
       summary: New comment
-      operationId: views.CommentsView.post_comment_in_uri
+      operationId: views.CommentsView.post_comment_in_loc
       description: |
         This API is rate-limited (5 calls / min). Captcha may or may not be shown, depending on server setting
       requestBody:
@@ -777,7 +777,7 @@ paths:
         - comments
     put:
       summary: Toggle comments to be on/off
-      operationId: views.CommentsView.toggle_comments_in_uri
+      operationId: views.CommentsView.toggle_comments_in_loc
       description: |
         This can only work AFTER the page (post / about) is created!
         ## Sample usage
@@ -1004,7 +1004,21 @@ paths:
         '401':
           description: |
             Bad credentials
-            returned title can be `bad credential` or `bad captcha`
+            returned title can be `bad credential`
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ApiResponse'
+                  - type: object
+                    properties:
+                      status:
+                        type: integer
+                        example: 401
+        '403':
+          description: |
+            Bad credentials
+            returned title can be `bad credential`
           content:
             application/json:
               schema:
