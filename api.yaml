@@ -705,7 +705,6 @@ paths:
         required: true
         schema:
           type: string
-          format: uri
     get:
       summary: All comments in uri
       operationId: views.CommentsView.get_comments_in_uri
@@ -831,7 +830,7 @@ paths:
         required: true
         schema:
           type: string
-          format: uri
+          
       - in: path
         name: commentId
         required: true
