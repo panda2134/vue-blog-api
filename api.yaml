@@ -50,6 +50,7 @@ components:
         author:
           type: string
         contact:
+          required: email
           type: object
           properties:
             email:
